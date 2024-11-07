@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добавление сотрудника</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-weight: 500;
+            animation: slideInDown 0.5s ease-out;
+        }
+
+        @keyframes slideInDown {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            margin: 0 auto;
+            max-width: 600px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        div {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        input[type="text"], input[type="number"], input[type="date"] {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus, input[type="number"]:focus, input[type="date"]:focus {
+            border-color: #333;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+            transform: scale(1.02);
+        }
+
+        button {
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button:not(:last-child) {
+            margin-right: 15px;
+        }
+
+        button:hover {
+            background-color: #555;
+            transform: translateY(-2px);
+        }
+
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.7);
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+            pointer-events: none;
+        }
+
+        #message {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 18px;
+            color: green;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            form {
+                padding: 15px;
+            }
+
+            button {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Добавление сотрудника</h1>
+    <form id="registrationForm">
+        <div>
+            <label for="lastName">Фамилия:</label>
+            <input type="text" id="lastName" required placeholder="Введите фамилию">
+        </div>
+        <div>
+            <label for="firstName">Имя:</label>
+            <input type="text" id="firstName" required placeholder="Введите имя">
+        </div>
+        <div>
+            <label for="middleName">Отчество:</label>
+            <input type="text" id="middleName" placeholder="Введите отчество">
+        </div>
+        <div>
+            <label for="birthDate">Дата рождения:</label>
+            <input type="date" id="birthDate" required>
+        </div>
+        <div>
+            <label for="passport">Серия/номер паспорта:</label>
+            <input type="text" id="passport" required placeholder="1234-567890" maxlength="11" title="Введите корректный формат: 1234-567890">
+        </div>
+        <div>
+            <label for="contactInfo">Контактная информация:</label>
+            <input type="text" id="contactInfo" required placeholder="8 999 999 99 99" maxlength="16" title="Введите корректный номер телефона">
+        </div>
+        <div>
+            <label for="address">Адрес проживания:</label>
+            <input type="text" id="address" required placeholder="Введите адрес">
+        </div>
+        <div>
+            <label for="department">Отдел:</label>
+            <input type="text" id="department" required placeholder="Введите отдел">
+        </div>
+        <div>
+            <label for="position">Должность:</label>
+            <input type="text" id="position" required placeholder="Введите должность">
+        </div>
+        <div>
+            <label for="salary">Размер зарплаты:</label>
+            <input type="number" id="salary" required placeholder="Введите зарплату" min="0" step="0.01">
+        </div>
+        <div>
+            <label for="hireDate">Дата принятия на работу:</label>
+            <input type="date" id="hireDate" required>
+        </div>
+        <div>
+            <button type="submit">Создать аккаунт</button>
+            <button type="button" id="backToListBtn">Вернуться к списку сотрудников</button>
+        </div>
+    </form>
+    
+    <div id="message"></div>
+
+    <script>
+        document.getElementById('backToListBtn').addEventListener('click', () => {
+            window.location.href = 'main.html';
+        });
+
+        // Для маски паспорта
+        document.getElementById('passport').addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 4) {
+                value = value.substring(0, 4) + '-' + value.substring(4, 10);
+            }
+            e.target.value = value;
+        });
+
+        document.getElementById('contactInfo').addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, '');
+
+            if (value.length === 0) {
+                e.target.value = '';
+                return;
+            }
+            value = value.charAt(0) + ' ' + value.substring(1, 4) + ' ' + value.substring(4, 7) + ' ' + value.substring(7, 9) + ' ' + value.substring(9, 11);
+
+            e.target.value = value.trim();
+        });
+
+        document.getElementById('registrationForm').addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const formData = {
+        lastName: document.getElementById('lastName').value,
+        firstName: document.getElementById('firstName').value,
+        middleName: document.getElementById('middleName').value,
+        birthDate: document.getElementById('birthDate').value,
+        passport: document.getElementById('passport').value,
+        contactInfo: document.getElementById('contactInfo').value,
+        address: document.getElementById('address').value,
+        salary: parseFloat(document.getElementById('salary').value),
+        hireDate: document.getElementById('hireDate').value,
+        departmentName: document.getElementById('department').value,
+        positionName: document.getElementById('position').value,
+    };
+
+    const messageDiv = document.getElementById('message');
+    messageDiv.textContent = '';
+
+    try {
+        const response = await fetch('http://localhost:3000/api/workers', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        });
+
+        // Проверяем, что ответ — JSON
+        const contentType = response.headers.get('Content-Type');
+        if (!contentType || !contentType.includes('application/json')) {
+            const textResponse = await response.text();  // Чтение ответа как текст для отладки
+            throw new Error(`Сервер вернул не JSON. Ответ: ${textResponse}`);
+        }
+
+        if (!response.ok) {
+            const errorResponse = await response.json();
+            throw new Error('Ошибка при создании аккаунта: ' + (errorResponse.message || response.statusText));
+        }
+
+        const result = await response.json();
+        messageDiv.textContent = 'Аккаунт успешно создан!';
+        document.getElementById('registrationForm').reset();
+    } catch (error) {
+        console.error('Ошибка при создании аккаунта:', error);
+        messageDiv.textContent = 'Ошибка при создании аккаунта. Пожалуйста, попробуйте еще раз. ' + error.message;
+    }
+});
+    </script>
+</body>
+</html>

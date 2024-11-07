@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список сотрудников</title>
+    <style>
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+    transition: all 0.3s ease;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    padding: 20px;
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 30px;
+    font-weight: 500;
+    animation: slideInDown 0.5s ease-out;
+}
+
+@keyframes slideInDown {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.filter-section {
+    background-color: #e0e0e0;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.filter-section:hover {
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.filter-group {
+    margin-bottom: 20px;
+}
+
+.filter-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #333;
+    font-weight: 500;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Анимация при фокусе на поле ввода */
+input[type="text"]:focus {
+    border-color: #333;
+    box-shadow: 0 0 5px rgba(0,0,0,0.2);
+}
+
+input[type="text"] {
+    position: relative;
+    overflow: hidden;
+}
+
+input[type="text"]:focus::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(51, 51, 51, 0.1);
+    transform: scale(0);
+    transform-origin: center;
+    border-radius: 50%;
+    animation: ripple 0.6s ease-out forwards;
+}
+
+@keyframes ripple {
+    from { transform: scale(0); opacity: 1; }
+    to { transform: scale(4); opacity: 0; }
+}
+
+button {
+    background-color: #333;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 30px;
+}
+
+.actions button {
+    margin-right: 15px; /* Увеличенный отступ между кнопками */
+    margin-bottom: 10px; /* Отступ снизу для адаптивности */
+}
+
+button:hover {
+    background-color: #555;
+    transform: translateY(-2px);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    animation: fadeIn 0.5s ease-out;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+    transition: all 0.3s ease;
+}
+
+th {
+    background-color: #333;
+    color: white;
+    font-weight: 500;
+}
+
+tr:nth-child(even) {
+    background-color: #f8f8f8;
+}
+
+tr:hover {
+    background-color: #e8e8e8;
+}
+
+.full-name-filter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.full-name-fields {
+    display: flex;
+    gap: 15px;
+    flex: 1;
+}
+
+.full-name-fields input[type="text"] {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+@media (max-width: 768px) {
+    .full-name-filter {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .actions button {
+        margin-right: 0;
+        margin-bottom: 20px;
+        width: 100%;
+    }
+
+    table {
+        font-size: 14px;
+    }
+
+    th, td {
+        padding: 8px;
+    }
+}
+
+    </style>
+</head>
+<body>
+    <h1>Список сотрудников</h1>
+
+    <div class="filter">
+        <label for="fullnameFilter">Фильтр по ФИО:</label>
+        <input type="text" id="lastNameFilter" placeholder="Фамилия">
+        <input type="text" id="firstNameFilter" placeholder="Имя">
+        <input type="text" id="middleNameFilter" placeholder="Отчество">
+        <button onclick="filterByFullName()">Фильтровать</button>
+        <span id="fullNameError" class="error"></span>
+    </div>
+    <div class="filter">
+        <label for="departmentFilter">Фильтр по отделу:</label>
+        <input type="text" id="departmentFilter" placeholder="Введите название отдела">
+        <button onclick="filterByDepartment()">Фильтровать</button>
+        <span id="departmentError" class="error"></span>
+    </div>  
+    <div class="filter">
+        <label for="positionFilter">Фильтр по должности:</label>
+        <input type="text" id="positionFilter" placeholder="Введите должность">
+        <button onclick="filterByPosition()">Фильтровать</button>
+        <span id="positionError" class="error"></span>
+    </div>
+
+    <div class="actions">
+        <button id="addUserBtn">Добавить сотрудника</button>
+        <button onclick="resetFilters()">Отменить фильтры</button>
+    </div>
+
+    <table id="usersTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Фамилия</th>
+                <th>Имя</th>
+                <th>Отчество</th>
+                <th>Дата рождения</th>
+                <th>Паспорт</th>
+                <th>Контактная информация</th>
+                <th>Адрес</th>
+                <th>Зарплата</th>
+                <th>Дата найма</th>
+                <th>Отдел</th>
+                <th>Статус</th>
+                <th>Должность</th>
+                <th colspan="2">Действия</th>
+            </tr>
+        </thead>
+        <tbody id="usersBody">
+        </tbody>
+    </table>
+
+    <script>
+        const editUser = (userId) => {
+            window.location.href = `edit_user.html?userId=${userId}`;
+        };
+
+        document.getElementById('addUserBtn').addEventListener('click', () => {
+            window.location.href = 'create_user.html';
+        });
+        const fetchUsers = async () => {
+            try {
+                const response = await fetch('http://localhost:3000/api/workers');
+                if (!response.ok) {
+                    throw new Error('Ошибка сети: ' + response.statusText);
+                }
+                const users = await response.json();
+                displayUsers(users);
+            } catch (error) {
+                console.error('Ошибка при получении сотрудников:', error);
+            }
+        };
+
+        const dismissUser = async (userId) => {
+            if (confirm('Вы уверены, что хотите уволить этого сотрудника?')) {
+                try {
+                    const response = await fetch(`http://localhost:3000/api/workers/${userId}`, {
+                        method: 'DELETE',
+                    });
+                    if (!response.ok) {
+                        throw new Error('Ошибка при увольнении сотрудника: ' + response.statusText);
+                    }
+                    alert('Сотрудник успешно уволен!');
+                    fetchUsers();
+                } catch (error) {
+                    console.error('Ошибка при увольнении:', error);
+                }
+            }
+        };
+
+        const filterByFullName = async () => {
+            const lastName = document.getElementById('lastNameFilter').value.trim();
+            const firstName = document.getElementById('firstNameFilter').value.trim();
+            const middleName = document.getElementById('middleNameFilter').value.trim();
+            const fullNameError = document.getElementById('fullNameError');
+
+            fullNameError.textContent = '';
+
+            if (!lastName || !firstName) {
+                fullNameError.textContent = 'Пожалуйста, введите фамилию и имя для фильтрации.';
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:3000/api/workers/fullname/${lastName}/${firstName}/${middleName}`);
+                if (!response.ok) {
+                    throw new Error('Ошибка фильтрации по ФИО: ' + response.statusText);
+                }
+                
+                const data = await response.json(); 
+                if (Array.isArray(data)) {
+                    displayUsers(data); 
+                } else {
+                    displayUsers([data]);
+                }
+            } catch (error) {
+                console.error('Ошибка при фильтрации по ФИО:', error);
+            }
+        };
+
+        const filterByPosition = async () => {
+            const position = document.getElementById('positionFilter').value.trim();
+            const positionError = document.getElementById('positionError');
+
+            positionError.textContent = '';
+
+            if (!position) {
+                positionError.textContent = 'Пожалуйста, введите должность для фильтрации.';
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:3000/api/workers/position/${position}`);
+                if (!response.ok) {
+                    throw new Error('Ошибка фильтрации по должности: ' + response.statusText);
+                }
+                const users = await response.json();
+                displayUsers(users);
+            } catch (error) {
+                console.error('Ошибка при фильтрации по должности:', error);
+            }
+        };
+
+        const filterByDepartment = async () => {
+            const departmentName = document.getElementById('departmentFilter').value.trim();
+            const departmentError = document.getElementById('departmentError');
+
+            departmentError.textContent = '';
+
+            if (!departmentName) {
+                departmentError.textContent = 'Пожалуйста, введите название отдела для фильтрации.';
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:3000/api/workers/department/${departmentName}`);
+                if (!response.ok) {
+                    throw new Error('Ошибка фильтрации по отделу: ' + response.statusText);
+                }
+                const users = await response.json();
+                if (users.length > 0) {
+                    displayUsers(users);
+                } else {
+                    displayUsers([]);
+                }
+            } catch (error) {
+                console.error('Ошибка при фильтрации по отделу:', error);
+            }
+        };
+
+        const formatDate = (dateString) => {
+            const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+            return new Date(dateString).toLocaleDateString('ru-RU', options);
+        };
+
+        const displayUsers = (users) => {
+    const usersBody = document.getElementById('usersBody');
+    usersBody.innerHTML = '';
+
+    users.forEach(user => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${user.id_worker}</td> <!-- замените id_user на id_worker -->
+            <td>${user.last_name}</td>
+            <td>${user.first_name}</td>
+            <td>${user.middle_name}</td>
+            <td>${formatDate(user.birth_date)}</td>
+            <td>${user.passport}</td>
+            <td>${user.contact_info}</td>
+            <td>${user.address}</td>
+            <td>${user.salary}</td>
+            <td>${formatDate(user.hire_date)}</td>
+            <td>${user.department_name}</td>
+            <td>${user.status_name}</td>
+            <td>${user.position_name}</td>
+            <td><button onclick="editUser(${user.id_worker})">Изменить</button></td> <!-- и здесь -->
+            <td><button onclick="dismissUser(${user.id_worker})">Уволить</button></td> <!-- и здесь -->
+        `;
+        usersBody.appendChild(row);
+    });
+};
+
+        const resetFilters = () => {
+            document.getElementById('lastNameFilter').value = '';
+            document.getElementById('firstNameFilter').value = '';
+            document.getElementById('middleNameFilter').value = '';
+            document.getElementById('departmentFilter').value = '';
+            document.getElementById('positionFilter').value = '';
+            document.getElementById('fullNameError').textContent = '';
+            document.getElementById('departmentError').textContent = '';
+            document.getElementById('positionError').textContent = '';
+            fetchUsers();
+        };
+
+        fetchUsers();
+    </script>
+</body>
+</html>
