@@ -1,6 +1,6 @@
 Задание для теста — Areal
 Запуск серверной части
-cd Backend
+cd Бэк
 npm install
 node app.js
 Запуск Фронтенда
