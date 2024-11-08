@@ -1,5 +1,5 @@
 const express = require('express');
-const workerController = require('../controllers/actions_with_db');
+const workerController = require('../controllers/actions_with_the_database');
 
 const router = express.Router();
 

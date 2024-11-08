@@ -1,4 +1,4 @@
-const { pool } = require('../config/init_db');
+const { pool } = require('../config/create_db');
 
 // Для получения всех работников
 const getWorkers = async (req, res) => {

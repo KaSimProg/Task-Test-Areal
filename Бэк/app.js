@@ -1,5 +1,5 @@
 const express = require('express');
-const { initDatabase } = require('./config/init_db');
+const { initDatabase } = require('./config/create_db');
 const workerRoutes = require('./routes/index');
 const cors = require('cors');
 
